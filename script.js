@@ -32,7 +32,7 @@ window.onload = function()
             snakee.advance();
             if(snakee.checkCollision())
                 {
-                    //Game Over
+                    gameOver();
                 }
                 else
                 {
@@ -54,7 +54,19 @@ window.onload = function()
                 }
 
         };
-
+    function gameOver()
+        {
+            ctx.save();
+            ctx.fillText("Game Over", 5, 15);
+            ctx.fillText("Appuyez sur la touche Espace pour rejouer", 5, 30);
+            ctx.restore();
+        }
+    function restart()
+        {
+            snakee = new Snake([[6,4],[5,4],[4,4],[3,4],[2,4]],"right");
+            applee = new Apple([10,10]);
+            refreshCanvas();
+        }
 //on défini la position de départ du serpent
     function drawBlock(ctx, position)
         {
@@ -239,6 +251,9 @@ this.draw = function()
             case 40:
                 newDirection = "down";
                 break;
+            case 32:
+                restart();
+                return;
             default:
                 return;
         }
