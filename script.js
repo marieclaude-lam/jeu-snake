@@ -5,8 +5,6 @@ window.onload = function()
     var blockSize = 30;
     var ctx;
     var delay = 100;//en ms.
-    /*var xCoord = 0;
-    var yCoord = 0;*/
     var snakee;
 
     init();
@@ -21,6 +19,7 @@ window.onload = function()
             document.body.appendChild(canvas);
             ctx = canvas.getContext('2d');
             snakee = new Snake([[6,4],[5,4],[4,4]],"right");
+            applee = new Apple([10,10]);
             refreshCanvas();
         }
 //on raffraichi notre serpent tous les 100ms
@@ -32,6 +31,7 @@ window.onload = function()
             snakee.advance();
 //J'appelle la fonction pour dessiner le serpent
             snakee.draw();
+            applee.draw();
             setTimeout(refreshCanvas,delay);
         };
 
@@ -42,7 +42,7 @@ window.onload = function()
         var y = position[1] * blockSize;
         ctx.fillRect(x,y,blockSize,blockSize);
     }
-//Notre constructeur
+///////////////////////Notre constructeur pour le serpent//////////////////////////////////
     function Snake(body,direction)
     {
         this.body = body;
@@ -56,7 +56,7 @@ window.onload = function()
                     {
                         drawBlock(ctx, this.body[i]);
                     }
-                    ctx.restore();
+                 ctx.restore();
             };
 //on fait avancer le serpent
         this.advance= function()
@@ -112,7 +112,25 @@ window.onload = function()
             }
         };
     }
-
+///////////////////////Notre constructeur pour la pomme//////////////////////////////////
+function Apple(position)
+{
+this.position = position;
+this.draw = function()
+    {
+    ctx.save();
+    ctx.fillStyle ="#33cc33";
+    ctx.beginPath();
+    var radius = blockSize/2;//rayon du cercle
+//on défini le centre du cercle
+    var x = position[0]*blockSize+radius;
+    var y = position[1]*blockSize+radius;
+//on dessine notre rond
+    ctx.arc(x,y,radius,0,Math.PI*2,true);
+    ctx.fill();
+    ctx.restore;
+    }
+}
 //actions sur le clavier
     document.onkeydown = function handleKeyDown(e)
     {
