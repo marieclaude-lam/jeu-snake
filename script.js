@@ -9,6 +9,7 @@ window.onload = function()
     var applee;
     var widthInBlocks = canvasWidth/blockSize;
     var heightInBlocks = canvasHeight/blockSize;
+    var score;
 
     init();
 
@@ -23,6 +24,7 @@ window.onload = function()
             ctx = canvas.getContext('2d');
             snakee = new Snake([[6,4],[5,4],[4,4],[3,4],[2,4]],"right");
             applee = new Apple([10,10]);
+            score = 0;
             refreshCanvas();
         }
 //on raffraichi notre serpent tous les 100ms
@@ -38,6 +40,7 @@ window.onload = function()
                 {
                     if(snakee.isEatingApple(applee))
                     {
+                        score++;
                         snakee.ateApple = true;
                         do
                         {
@@ -50,6 +53,7 @@ window.onload = function()
         //J'appelle la fonction pour dessiner le serpent
                     snakee.draw();
                     applee.draw();
+                    drawScore();
                     setTimeout(refreshCanvas,delay);
                 }
 
@@ -61,10 +65,19 @@ window.onload = function()
             ctx.fillText("Appuyez sur la touche Espace pour rejouer", 5, 30);
             ctx.restore();
         }
+
+        function drawScore()
+        {
+            ctx.save();
+            ctx.fillText(score.toString(), 5, canvasHeight -5);
+            ctx.restore();
+        }
+
     function restart()
         {
             snakee = new Snake([[6,4],[5,4],[4,4],[3,4],[2,4]],"right");
             applee = new Apple([10,10]);
+            score = 0;
             refreshCanvas();
         }
 //on défini la position de départ du serpent
