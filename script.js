@@ -38,6 +38,7 @@ window.onload = function()
                 {
                     if(snakee.isEatingApple(applee))
                     {
+                        snakee.ateApple = true;
                         do
                         {
                             applee.setNewPosition();
@@ -66,6 +67,7 @@ window.onload = function()
     {
         this.body = body;
         this.direction = direction;
+        this.ateApple = false;
         this.draw = function()
             {
                 ctx.save();
@@ -102,8 +104,12 @@ window.onload = function()
             };
 //on ajoute à notre body la nouvelle position [7,4], on aura donc 4 éléments
             this.body.unshift(nextPosition);
+//si le serpent a mangé a mangé une on ne supprime pas le dernier élément du serpent
+            if(!this.ateApple)
 //On supprime donc le dernier élément [4,4] de l'array
-            this.body.pop();
+                this.body.pop();
+            else
+                this.ateApple = false;
         };
 //On détermine les directions permises,
 //ex: on ne pourra pas appuyer sur la touche gauche si on vient de la gauche
