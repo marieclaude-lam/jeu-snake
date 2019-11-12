@@ -10,7 +10,7 @@ window.onload = function()
     var widthInBlocks = canvasWidth/blockSize;
     var heightInBlocks = canvasHeight/blockSize;
     var score;
-    var timeOut;
+    var timeout;
 
     init();
 
@@ -58,7 +58,7 @@ window.onload = function()
         //J'appelle la fonction pour dessiner le serpent
                     snakee.draw();
                     applee.draw();
-                    timeOut = setTimeout(refreshCanvas,delay);
+                    timeout = setTimeout(refreshCanvas,delay);
                 }
 
         };
