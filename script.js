@@ -6,6 +6,9 @@ window.onload = function()
     var ctx;
     var delay = 100;//en ms.
     var snakee;
+    var applee;
+    var widthInBlocks = canvasWidth/blockSize;
+    var heightInBlocks = canvasHeight/blockSize;
 
     init();
 
@@ -25,23 +28,32 @@ window.onload = function()
 //on raffraichi notre serpent tous les 100ms
     function refreshCanvas()
         {
-// le snake va se déplacer, il faut donc effacer une partie.
-            ctx.clearRect(0,0,canvasWidth, canvasHeight);
+
 //j'appelle la fonction pour faire avancer le serpent
             snakee.advance();
+            if(snakee.checkCollision())
+                {
+                    //Game Over
+                }
+                else{
+// le snake va se déplacer, il faut donc effacer une partie.
+            ctx.clearRect(0,0,canvasWidth, canvasHeight);
+
 //J'appelle la fonction pour dessiner le serpent
             snakee.draw();
             applee.draw();
             setTimeout(refreshCanvas,delay);
+                }
+
         };
 
 //on défini la position de départ du serpent
     function drawBlock(ctx, position)
-    {
-        var x = position[0] * blockSize;
-        var y = position[1] * blockSize;
-        ctx.fillRect(x,y,blockSize,blockSize);
-    }
+        {
+            var x = position[0] * blockSize;
+            var y = position[1] * blockSize;
+            ctx.fillRect(x,y,blockSize,blockSize);
+        }
 ///////////////////////Notre constructeur pour le serpent//////////////////////////////////
     function Snake(body,direction)
     {
@@ -104,13 +116,44 @@ window.onload = function()
                 default:
                     throw("Invalid Direction");
             }
-//allowedDirections doit correctpondre à 0ou 1 dans l'array
+//allowedDirections doit correspondre à 0ou 1 dans l'array
 //ex:allowedDirections =["up","down"] 0 pour up et 1 pour down
             if(allowedDirections.indexOf(newDirection)> -1)
             {
                 this.direction = newDirection;
             }
         };
+
+//pour qu'en cas de collision le serpent s'arrête
+        this.checkCollision = function()
+        {
+            wallCollision = false;
+            snakeCollision = false;
+            var head = this.body[0];
+            var rest = this.body.slice(1);
+            var snakeX = head[0];
+            var snakeY = head[1];
+            var minX =0;
+            var minY = 0;
+            var maxX = widthInBlocks - 1;
+            var maxY =heightInBlocks - 1;
+            var isNotBtwXWalls = snakeX < minX || snakeX > maxX;
+            var isNotBtwYWalls = snakeY < minY || snakeY > maxY;
+//Dans le ou sa tête entre en colision avec un mur
+            if(isNotBtwXWalls || isNotBtwYWalls)
+                {
+                    wallCollision = true;
+                }
+//Dans le cas où la tête du serpent touche son corps
+            for(var i=0; i<rest.length; i++)
+                {
+                    if(snakeX === rest[i][0] && snakeY === rest[i][1])
+                        {
+                            snakeCollision = true;
+                        }
+                }
+                return wallCollision || snakeCollision;
+        }
     }
 ///////////////////////Notre constructeur pour la pomme//////////////////////////////////
 function Apple(position)
