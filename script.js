@@ -21,28 +21,35 @@ window.onload = function()
             canvas.style.border ="1px solid";
             document.body.appendChild(canvas);
             ctx = canvas.getContext('2d');
-            snakee = new Snake([[6,4],[5,4],[4,4]],"right");
+            snakee = new Snake([[6,4],[5,4],[4,4],[3,4],[2,4]],"right");
             applee = new Apple([10,10]);
             refreshCanvas();
         }
 //on raffraichi notre serpent tous les 100ms
     function refreshCanvas()
         {
-
 //j'appelle la fonction pour faire avancer le serpent
             snakee.advance();
             if(snakee.checkCollision())
                 {
                     //Game Over
                 }
-                else{
-// le snake va se déplacer, il faut donc effacer une partie.
-            ctx.clearRect(0,0,canvasWidth, canvasHeight);
-
-//J'appelle la fonction pour dessiner le serpent
-            snakee.draw();
-            applee.draw();
-            setTimeout(refreshCanvas,delay);
+                else
+                {
+                    if(snakee.isEatingApple(applee))
+                    {
+                        do
+                        {
+                            applee.setNewPosition();
+                        }
+                        while(applee.isOnSnake(snakee))
+                    }
+        // le snake va se déplacer, il faut donc effacer une partie.
+                    ctx.clearRect(0,0,canvasWidth, canvasHeight);
+        //J'appelle la fonction pour dessiner le serpent
+                    snakee.draw();
+                    applee.draw();
+                    setTimeout(refreshCanvas,delay);
                 }
 
         };
@@ -139,7 +146,7 @@ window.onload = function()
             var maxY =heightInBlocks - 1;
             var isNotBtwXWalls = snakeX < minX || snakeX > maxX;
             var isNotBtwYWalls = snakeY < minY || snakeY > maxY;
-//Dans le ou sa tête entre en colision avec un mur
+//Dans le cas où la tête entre en colision avec un mur
             if(isNotBtwXWalls || isNotBtwYWalls)
                 {
                     wallCollision = true;
@@ -153,7 +160,17 @@ window.onload = function()
                         }
                 }
                 return wallCollision || snakeCollision;
+        };
+        this.isEatingApple = function(AppleToEat)
+        {
+            var head = this.body[0];
+            if(head[0] === AppleToEat.position[0] && head[1] === AppleToEat.position[1])
+                    return true;
+                else
+                    return false;
+
         }
+
     }
 ///////////////////////Notre constructeur pour la pomme//////////////////////////////////
 function Apple(position)
@@ -166,13 +183,34 @@ this.draw = function()
     ctx.beginPath();
     var radius = blockSize/2;//rayon du cercle
 //on défini le centre du cercle
-    var x = position[0]*blockSize+radius;
-    var y = position[1]*blockSize+radius;
+    var x = this.position[0]*blockSize+radius;
+    var y = this.position[1]*blockSize+radius;
 //on dessine notre rond
     ctx.arc(x,y,radius,0,Math.PI*2,true);
     ctx.fill();
-    ctx.restore;
-    }
+    ctx.restore();
+    };
+
+//on veut qu'une fois la pomme a été mangée, il y ait une nouvelle qui se mette à une position aléatoire
+    this.setNewPosition = function()
+    {
+        var newX = Math.round(Math.random() * (widthInBlocks -1));
+        var newY = Math.round(Math.random() * (heightInBlocks -1));
+        this.position = [newX,newY];
+    };
+//on veut éviter que la pomme soit mise sur le serpent
+    this.isOnSnake =function(snakeToCheck)
+   {
+        var isOnSnake = false;
+        for(var i = 0; i < snakeToCheck.body.length; i++)
+        {
+            if(this.position[0] === snakeToCheck.body[i][0] && this.position[1] === snakeToCheck.body[i][1])
+            {
+                isOnSnake = true;
+            }
+        }
+            return isOnSnake;
+   }
 }
 //actions sur le clavier
     document.onkeydown = function handleKeyDown(e)
